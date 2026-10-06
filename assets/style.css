@@ -367,11 +367,17 @@ main { display: block; }
 @media (min-width: 60rem) {
   .hero { padding-top: 5.5rem; }
   .hero-grid {
-    grid-template-columns: minmax(0, 1fr) 22rem;
-    gap: 4rem;
-    align-items: start;
+    gap: 2rem;
     margin-top: 2.25rem;
   }
+  .hero-lede { max-width: 44rem; }
+  .howto { padding: 1.4rem 1.75rem 1.5rem; }
+  .howto ul {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem 3rem;
+  }
+  .howto li + li { margin-top: 0; }
 }
 
 /* ---------- 首頁：學院卡片 ---------- */
@@ -384,6 +390,14 @@ main { display: block; }
 }
 
 .card {
+  /* 卡片內一律使用淺色配色 */
+  --bg: #ffffff;
+  --surface: #f1f2f4;
+  --ink: #15171a;
+  --ink-2: #353a42;
+  --muted: #5b616b;
+  --rule: #dfe2e7;
+  --brand-text: #b0463a;
   display: flex;
   flex-direction: column;
   padding: 1.4rem 1.4rem 1.5rem;
@@ -391,9 +405,16 @@ main { display: block; }
   border: 1px solid var(--rule);
   border-radius: 16px;
   text-decoration: none;
-  color: inherit;
+  color: var(--ink);
 }
 .card:hover { border-color: var(--ink); }
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .card { border-color: transparent; }
+  :root:not([data-theme="light"]) .card:hover { box-shadow: 0 0 0 2px #9aa1ab; }
+}
+:root[data-theme="dark"] .card { border-color: transparent; }
+:root[data-theme="dark"] .card:hover { box-shadow: 0 0 0 2px #9aa1ab; }
 
 .card-top {
   display: flex;
@@ -459,28 +480,19 @@ main { display: block; }
   color: var(--bg);
 }
 
-.card-flagship {
-  background: var(--feature-bg);
-  color: var(--feature-ink);
-  border: 0;
-  box-shadow: inset 0 4px 0 var(--brand);
-  padding-top: 1.75rem;
-}
-.card-flagship:hover { box-shadow: inset 0 4px 0 var(--brand), 0 0 0 2px var(--brand); }
+/* :root 提高優先順序，深色模式下也保留品牌色外框 */
+:root .card.card-flagship { border: 2px solid var(--brand); }
+:root .card.card-flagship:hover { border-color: var(--brand); box-shadow: 0 0 0 1px var(--brand); }
+.card-flagship { padding-top: 1.75rem; }
 .card-flagship .chip {
   background: transparent;
-  color: var(--feature-ink);
+  color: var(--brand-text);
   box-shadow: inset 0 0 0 1.5px var(--brand);
 }
-.card-flagship .card-top,
-.card-flagship .card-visit { color: var(--feature-muted); }
-.card-flagship .card-desc,
-.card-flagship .card-visit .k { color: var(--feature-ink); }
-.card-flagship .card-visit { border-top-color: var(--feature-rule); }
 .card-flagship .card-name { font-size: clamp(2rem, 6vw, 2.5rem); }
 .card-flagship .card-btn {
-  background: var(--feature-ink);
-  color: var(--feature-bg);
+  background: var(--brand);
+  color: #ffffff;
 }
 
 @media (min-width: 48rem) {
@@ -913,15 +925,12 @@ main { display: block; }
 
 .takeaways {
   margin: 1.5rem 0 2rem;
-  padding: 0.5rem 1.25rem;
-  background: var(--feature-bg);
-  color: var(--feature-ink);
-  border-radius: 16px;
+  border-top: 2px solid var(--ink);
 }
 .takeaways li {
   position: relative;
-  padding: 1.1rem 0 1.15rem 2.6rem;
-  border-top: 1px solid var(--feature-rule);
+  padding: 1rem 0 1.05rem 2.4rem;
+  border-top: 1px solid var(--rule);
   counter-increment: takeaway;
 }
 .takeaways li:first-child { border-top: 0; }
@@ -930,11 +939,11 @@ main { display: block; }
   content: counter(takeaway);
   position: absolute;
   left: 0;
-  top: 1.05rem;
-  font-size: 1.75rem;
+  top: 0.95rem;
+  font-size: 1.5rem;
   line-height: 1;
   font-weight: 700;
-  color: var(--brand);
+  color: var(--brand-text);
   font-variant-numeric: tabular-nums;
 }
 .takeaway-q {
@@ -947,13 +956,12 @@ main { display: block; }
   margin-top: 0.3rem;
   font-size: 0.8125rem;
   font-weight: 700;
-  color: var(--feature-muted);
+  color: var(--muted);
   text-align: left;
 }
 
 @media (min-width: 45rem) {
-  .takeaways { padding: 0.75rem 2rem; }
-  .takeaways li { padding-left: 3rem; }
+  .takeaways li { padding-left: 2.75rem; }
 }
 
 /* ---------- 數字拆解 ---------- */
@@ -1235,7 +1243,6 @@ main { display: block; }
 /* 手機：摘錄、帶走問題與訂閱區塊延伸到螢幕兩側，讓內文有更寬的行長 */
 @media (max-width: 44.99rem) {
   .excerpt:not(.is-pull),
-  .takeaways,
   .cta {
     margin-left: calc(-1 * var(--gutter));
     margin-right: calc(-1 * var(--gutter));
@@ -1245,7 +1252,6 @@ main { display: block; }
     padding-left: calc(var(--gutter) - 3px);
     padding-right: var(--gutter);
   }
-  .takeaways { padding-left: var(--gutter); padding-right: var(--gutter); }
   .cta { padding-left: var(--gutter); padding-right: var(--gutter); }
   .sub-grid .cta { margin-left: calc(-1 * var(--gutter)); margin-right: calc(-1 * var(--gutter)); }
   .question,
@@ -1279,39 +1285,39 @@ main { display: block; }
 .trial-head {
   position: relative;
   padding: 1.6rem 1.4rem 1.6rem;
-  background: var(--feature-bg);
-  color: var(--feature-ink);
+  background: var(--brand);
+  color: #ffffff;
   border-radius: 16px;
 }
 .trial-head .stop-head { margin-bottom: 0; }
 .stop-trial .stop-label {
   padding-left: 1.25rem;
-  color: var(--feature-muted);
+  color: rgba(255, 255, 255, 0.9);
 }
-.stop-trial .stop-label::before {
+.stop.stop-trial .stop-label::before {
   left: 0;
-  background: var(--brand);
-  border-color: var(--brand);
+  background: #ffffff;
+  border-color: #ffffff;
 }
 .trial-kicker {
   display: block;
   margin-top: 1rem;
   font-size: 0.875rem;
   font-weight: 700;
-  color: var(--feature-muted);
+  color: rgba(255, 255, 255, 0.92);
 }
 .stop-trial .stop-title {
   margin-top: 0.35rem;
   font-size: clamp(1.5rem, 4.5vw + 0.4rem, 2.125rem);
   line-height: 1.35;
-  color: var(--feature-ink);
+  color: #ffffff;
 }
 .stop-trial .stop-label + .stop-title { margin-top: 1rem; }
 .trial-sub {
   margin-top: 0.4rem;
   font-size: 1rem;
   font-weight: 700;
-  color: var(--feature-muted);
+  color: rgba(255, 255, 255, 0.92);
   text-align: left;
 }
 .trial-facts {
@@ -1320,23 +1326,25 @@ main { display: block; }
   align-items: center;
   gap: 0.4rem 1rem;
   margin-top: 1.1rem;
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
+  font-weight: 500;
   line-height: 1.6;
-  color: var(--feature-muted);
+  color: rgba(255, 255, 255, 0.95);
   text-align: left;
 }
 .trial-facts .chip {
   background: transparent;
-  color: var(--feature-ink);
-  box-shadow: inset 0 0 0 1.5px var(--brand);
+  color: #ffffff;
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.85);
 }
 .trial-intro {
   margin-top: 1.25rem;
   padding-top: 1.1rem;
-  border-top: 1px solid var(--feature-rule);
-  font-size: 0.96875rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.35);
+  font-size: 1rem;
+  font-weight: 500;
   line-height: 1.8;
-  color: var(--feature-ink);
+  color: #ffffff;
 }
 
 .trial-article {
