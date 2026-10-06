@@ -45,3 +45,31 @@
   btn.hidden = false;
   render();
 })();
+
+/* 桌機寬螢幕：標示目前讀到的站點 */
+(function () {
+  var links = document.querySelectorAll('.toc a[data-stop]');
+  if (!links.length) return;
+  var stops = [];
+  for (var i = 0; i < links.length; i++) stops.push(document.getElementById(links[i].getAttribute('data-stop')));
+  var pending = false;
+
+  function update() {
+    pending = false;
+    var line = window.innerHeight * 0.35;
+    var cur = 0;
+    for (var i = 0; i < stops.length; i++) {
+      if (stops[i] && stops[i].getBoundingClientRect().top <= line) cur = i;
+    }
+    for (var j = 0; j < links.length; j++) {
+      if (j === cur) links[j].setAttribute('aria-current', 'step');
+      else links[j].removeAttribute('aria-current');
+    }
+  }
+
+  window.addEventListener('scroll', function () {
+    if (!pending) { pending = true; window.requestAnimationFrame(update); }
+  }, { passive: true });
+  window.addEventListener('resize', update);
+  update();
+})();
