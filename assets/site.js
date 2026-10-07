@@ -73,3 +73,44 @@
   window.addEventListener('resize', update);
   update();
 })();
+
+/* Meta Pixel 事件：
+   ViewContent   進入學院頁
+   SubscribeClick 點擊任何連到訂閱頁的連結（記錄頁面與位置）
+   ReachPaywall  讀到全文試讀的付費段落（每頁只記一次） */
+(function () {
+  function track(kind, name, params) {
+    if (typeof window.fbq === 'function') window.fbq(kind, name, params || {});
+  }
+  var page = document.body.getAttribute('data-page') || '';
+  var names = { decode: '商業解碼', tech: '科技曼讀', giants: '巨人之聲', salon: '會員沙龍' };
+
+  if (names[page]) {
+    track('track', 'ViewContent', { content_name: names[page], content_category: '導覽' });
+  }
+
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest ? e.target.closest('a[href*="pro.manny-li.com/join"]') : null;
+    if (!a) return;
+    var where = 'other';
+    if (a.closest('.unlock')) where = 'paywall';
+    else if (a.closest('.cta')) where = 'subscribe_block';
+    else if (a.closest('.site-header')) where = 'header';
+    else if (a.closest('.site-footer')) where = 'footer';
+    track('trackCustom', 'SubscribeClick', { page: page || 'index', position: where });
+  });
+
+  var wall = document.querySelector('.unlock');
+  if (wall && 'IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      for (var i = 0; i < entries.length; i++) {
+        if (entries[i].isIntersecting) {
+          track('trackCustom', 'ReachPaywall', { content_name: names[page] || page });
+          io.disconnect();
+          break;
+        }
+      }
+    }, { threshold: 0.4 });
+    io.observe(wall);
+  }
+})();
